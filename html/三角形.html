@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent; /* 左边为透明 */
+      border-right: 50px solid transparent; /* 右边为透明 */
+      border-bottom: 100px solid #f00; /* 底部为实色 */
+    }
+    .contain {
+      width: 100px;
+      height: 1200px;
+      background-color: blue;
+    }
+  </style>
+  <body>
+    <div class="triangle"></div>
+    <div class="contain"></div>
+    <img class="lazy" data-src="./bozai.png" src="" alt="Description" />
+  </body>
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const lazyImage = entry.target;
+          lazyImage.src = lazyImage.dataset.src; // 将 data-src 的值赋给 src
+          observer.unobserve(lazyImage); // 加载后停止观察这个图片
+        }
+      });
+    });
+    const lazyImages = document.querySelectorAll(".lazy");
+    lazyImages.forEach((item) => {
+      observer.observe(item);
+    });
+  </script>
+</html>

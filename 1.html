@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aspect Ratio</title>
+    <style>
+      .parent {
+        width: 50px; /* 或者任何固定的宽度，例如 500px */
+        height: 50px;
+        background-color: lightgray;
+        position: relative; /* 这个是为了让子元素使用绝对定位 */
+      }
+
+      .child {
+        width: 50%; /* 子元素宽度是父元素宽度的50% */
+        padding-bottom: 200%; /* 高度是宽度的2倍 */
+        background-color: coral;
+        position: absolute; /* 使用绝对定位来填充父元素 */
+        top: 0;
+        left: 0;
+        box-sizing: border-box; /* 这个属性可以确保padding被正确计算在内 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+  </body>
+</html>
