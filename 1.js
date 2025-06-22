@@ -1,27 +1,29 @@
-var lengthOfLongestSubstring = function (nums, k) {
-  if (nums.length < 2) return nums.length;
-  let i = 0,
-    childNum = nums[i],
-    maxLen = 1;
-  while (i < nums.length - 1) {
-    let j = i + 1;
-    while (j < nums.length) {
-      if (childNum > k) {
-        maxLen = maxLen < childNum.length ? childNum.length : maxLen;
+var largestRectangleArea = function (heights) {
+  let maxCount = 0;
+  // 找到每一个元素左边第一个比当前元素小的索引位置
+  const leftArr = Array.from({ length: heights.length }, () => -1);
+  for (let i = 1; i < heights.length; i++) {
+    for (let j = i - 1; j >= 0; j--) {
+      if (heights[i] > heights[j]) {
+        leftArr[i] = j;
         break;
-      } else {
-        childNum += nums[j];
-        j++;
       }
     }
-    if (j === nums.length) {
-      maxLen = maxLen < childNum.length ? childNum.length : maxLen;
-      break;
-    }
-    i++;
-    childNum = nums[i];
   }
-  return maxLen;
+  // 找到每一个元素右边第一个比当前元素小的索引位置
+  const rightArr = Array.from({ length: heights.length }, () => heights.length);
+  for (let i = 0; i < heights.length - 1; i++) {
+    for (let j = i + 1; j < heights.length; j++) {
+      if (heights[i] > heights[j]) {
+        rightArr[i] = j;
+        break;
+      }
+    }
+  }
+  for (let i = 0; i < heights.length; i++) {
+    const area = (rightArr[i] - leftArr[i] - 1) * heights[i];
+    maxCount = Math.max(area, maxCount);
+  }
+  return maxCount;
 };
-
-console.log(lengthOfLongestSubstring([1, 1, 1], 2));
+console.log(largestRectangleArea([2, 1, 5, 6, 2, 3]));
