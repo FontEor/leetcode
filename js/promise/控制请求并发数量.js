@@ -1,4 +1,3 @@
-// 控制并发数量1
 function concurRequest(urls, maxNum) {
   if (urls.length === 0) {
     return Promise.resolve([]);
