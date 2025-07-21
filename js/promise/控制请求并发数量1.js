@@ -30,19 +30,19 @@ class SuperTask {
  * 使用示例
  * 
  * */ 
-// const superTask = new SuperTask(2);
-// const timeout = (time) =>
-//   new Promise((resolve) => {
-//     console.log('Start task', time);
-//     setTimeout(() => {
-//       console.log('End task', time);
-//       resolve(time);
-//     }, time);
-//   });
-// superTask.add(() => timeout(1000)).then((res) => console.log('Result:', res));
-// superTask.add(() => timeout(500)).then((res) => console.log('Result:', res));
-// superTask.add(() => timeout(800)).then((res) => console.log('Result:', res));
-// superTask.add(() => timeout(200)).then((res) => console.log('Result:', res));
+const superTask = new SuperTask(2);
+const timeout = (time) =>
+  new Promise((resolve) => {
+    console.log('Start task', time);
+    setTimeout(() => {
+      console.log('End task', time);
+      resolve(time);
+    }, time);
+  });
+superTask.add(() => timeout(1000)).then((res) => console.log('Result:', res));
+superTask.add(() => timeout(500)).then((res) => console.log('Result:', res));
+superTask.add(() => timeout(800)).then((res) => console.log('Result:', res));
+superTask.add(() => timeout(200)).then((res) => console.log('Result:', res));
 
 /*
  * 输出示例
