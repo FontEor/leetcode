@@ -18,6 +18,3 @@ async function oneLight() {
     clearTimeout(timer3)
 }
 oneLight()
-    // setInterval(() => {
-    //     oneLight()
-    // }, 6000);

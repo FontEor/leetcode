@@ -1,4 +1,4 @@
-function f() {
+function randomNum() {
   return new Promise((resolve, reject) => {
     setTimeout(function () {
       let flag = Math.floor(Math.random() * 2);
@@ -10,6 +10,6 @@ function f() {
     }, 2000);
   });
 }
-f().then((res) => {
+randomNum().then((res) => {
   console.log(res);
 });
