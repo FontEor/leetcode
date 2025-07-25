@@ -7,20 +7,20 @@ class SuperTask {
   add(task) {
     return new Promise((resolve, reject) => {
       this.tasks.push({ task, resolve, reject });
-      this._run();
+      this._run(); //  来了 尝试着去叫号
     });
   }
   // 执行任务（叫号）
   _run() {
-    while (this.runningCount < this.parallelCount && this.tasks.length > 0) {
+    while (this.runningCount < this.parallelCount && this.tasks.length) {
       const { task, resolve, reject } = this.tasks.shift();
-      this.runningCount++;
       task()
         .then(resolve, reject)
         .finally(() => {
-          this.runningCount--;
-          this._run(); // 注意 this._run()
+          this.runningCount--; // 执行任务数量减一
+          this._run(); // 继续执行下一个任务
         });
+      this.runningCount++; // 执行任务数量加一
     }
   }
 }
