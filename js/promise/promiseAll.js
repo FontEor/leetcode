@@ -1,8 +1,8 @@
 function customPromiseAll(promises) {
   return new Promise((resolve, reject) => {
-    // if (!Array.isArray(promises)) {
-    //   return reject(new TypeError("Arguments must be an array"));
-    // }
+    if (!Array.isArray(promises)) {
+      return reject(new TypeError("Arguments must be an array"));
+    }
     let results = [];
     let completedCount = 0;
     promises.forEach((promise, index) => {
