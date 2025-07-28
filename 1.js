@@ -21,6 +21,29 @@ class MyPromise {
       reject(err);
     }
   }
+  then(onFulfilled, onRejected) {
+    return new MyPromise((resolve, reject) => {
+      this.#thenables.push({
+        onFulfilled,
+        onRejected,
+        resolve,
+        reject,
+      });
+      this.#run();
+    });
+  }
+  #run() {
+    if (this.#state === "pending") return;
+    while (this.#thenables.length) {
+      const { onFulfilled, onRejected, resolve, reject } =
+        this.#thenables.shift();
+      if (this.#state === "fulfilled") {
+        this.#handleCallback(onFulfilled, resolve, reject);
+      } else {
+        this.#handleCallback(onRejected, resolve, reject);
+      }
+    }
+  }
   #handleCallback(callback, resolve, reject) {
     if (typeof callback !== "function") {
       // 状态穿透
@@ -39,27 +62,4 @@ class MyPromise {
       }
     });
   }
-  #run() {
-    if (this.#state === "pending") return;
-    while (this.#thenables.length) {
-      const { onFulfilled, onRejected, resolve, reject } =
-        this.#thenables.shift();
-      if (this.#state === "fulfilled") {
-        this.#handleCallback(onFulfilled, resolve, reject);
-      } else {
-        this.#handleCallback(onRejected, resolve, reject);
-      }
-    }
-  }
-  then(onFulfilled, onRejected) {
-    return new MyPromise((resolve, reject) => {
-      this.#thenables.push({
-        onFulfilled,
-        onRejected,
-        resolve,
-        reject,
-      });
-      this.#run();
-    });
-  }
-} 
+}
