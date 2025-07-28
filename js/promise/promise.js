@@ -1,72 +1,122 @@
+const PENDING = "pending";
+const FULFILLED = "fulfilled";
+const REJECTED = "rejected";
 class MyPromise {
+  #state = "pending"; // 'pending', 'fulfilled', 'rejected'
+  #result = undefined;
+  #thenables = [];
   constructor(executor) {
-    this.state = "pending"; // 其他状态：'fulfilled' 或 'rejected'
-    this.value = undefined; // fulfilled 时的值
-    this.reason = undefined; // rejected 时的原因
-    this.onFulfilledCallbacks = []; // 存储所有成功的回调
-    this.onRejectedCallbacks = []; // 存储所有失败的回调
-    // resolve 方法
-    const resolve = (value) => {
-      if (this.state === "pending") {
-        this.state = "fulfilled";
-        this.value = value;
-        this.onFulfilledCallbacks.forEach((callback) => callback(value));
+    const resolve = (data) => {
+      if (this.#state !== "pending") return;
+      // 展开 thenable 值（如原生 Promise）
+      if (
+        data instanceof MyPromise ||
+        (data && typeof data.then === "function")
+      ) {
+        return data.then(resolve, reject);
       }
+      this.#state = "fulfilled";
+      this.#result = data;
+      this.#run();
     };
-    // reject 方法
-    const reject = (reason) => {
-      if (this.state === "pending") {
-        this.state = "rejected";
-        this.reason = reason;
-        this.onRejectedCallbacks.forEach((callback) => callback(reason));
-      }
+    const reject = (err) => {
+      if (this.#state !== "pending") return;
+      this.#state = "rejected";
+      this.#result = err;
+      this.#run();
     };
     try {
       executor(resolve, reject);
-    } catch (e) {
-      reject(e);
+    } catch (err) {
+      reject(err);
     }
   }
-  // then 方法
+
   then(onFulfilled, onRejected) {
-    // 默认的 onFulfilled 和 onRejected 函数，如果未提供则直接传递值
-    onFulfilled = typeof onFulfilled === "function" ? onFulfilled : (v) => v;
-    onRejected =
-      typeof onRejected === "function"
-        ? onRejected
-        : (r) => {
-            throw r;
-          };
     return new MyPromise((resolve, reject) => {
-      const handleCallback = (callback, value) => {
-        try {
-          const result = callback(value);
-          if (result instanceof MyPromise) {
-            result.then(resolve, reject);
-          } else {
-            resolve(result);
-          }
-        } catch (e) {
-          reject(e);
-        }
-      };
-      if (this.state === "fulfilled") {
-        handleCallback(onFulfilled, this.value);
-      } else if (this.state === "rejected") {
-        handleCallback(onRejected, this.reason);
+      this.#thenables.push({
+        onFulfilled,
+        onRejected,
+        resolve,
+        reject,
+      });
+      this.#run();
+    });
+  }
+  #run() {
+    if (this.#state === "pending") return;
+    while (this.#thenables.length) {
+      const { onFulfilled, onRejected, resolve, reject } =
+        this.#thenables.shift();
+      if (this.#state === "fulfilled") {
+        this.#handleCallback(onFulfilled, resolve, reject);
       } else {
-        this.onFulfilledCallbacks.push(() =>
-          handleCallback(onFulfilled, this.value)
-        );
-        this.onRejectedCallbacks.push(() =>
-          handleCallback(onRejected, this.reason)
-        );
+        this.#handleCallback(onRejected, resolve, reject);
+      }
+    }
+  }
+  #handleCallback(callback, resolve, reject) {
+    if (typeof callback !== "function") {
+      // 值穿透或错误穿透
+      queueMicrotask(() => {
+        const settled = this.#state === "fulfilled" ? resolve : reject;
+        settled(this.#result);
+      });
+      return;
+    }
+    queueMicrotask(() => {
+      try {
+        const data = callback(this.#result);
+        // 如果返回值是 Promise，则继续展开
+        if (
+          data instanceof MyPromise ||
+          (data && typeof data.then === "function")
+        ) {
+          data.then(resolve, reject);
+        } else {
+          resolve(data);
+        }
+      } catch (err) {
+        reject(err);
       }
     });
   }
-  // catch 方法
+
   catch(onRejected) {
     return this.then(null, onRejected);
+  }
+
+  // 静态方法：Promise.resolve
+  static resolve(value) {
+    return new MyPromise((resolve, reject) => {
+      if (
+        value instanceof MyPromise ||
+        (value && typeof value.then === "function")
+      ) {
+        value.then(resolve, reject);
+      } else {
+        resolve(value);
+      }
+    });
+  }
+
+  // 静态方法：Promise.reject
+  static reject(reason) {
+    return new MyPromise((_, reject) => reject(reason));
+  }
+
+  // finally 方法（可选）
+  finally(callback) {
+    return this.then(
+      (value) => {
+        return MyPromise.resolve(callback()).then(() => value);
+      },
+      (reason) => {
+        return MyPromise.resolve(callback()).then(() => {
+          throw reason;
+        });
+      }
+    );
   }
 }
 

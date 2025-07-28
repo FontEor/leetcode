@@ -1,22 +1,22 @@
 function customPromiseAll(promises) {
+  if (!Array.isArray(promises)) {
+    return Promise.reject(new TypeError("Arguments must be an array"));
+  }
+  if (promises.length === 0) {
+    return Promise.resolve([]);
+  }
   return new Promise((resolve, reject) => {
-    if (!Array.isArray(promises)) {
-      return reject(new TypeError("Arguments must be an array"));
-    }
-    let results = [];
-    let completedCount = 0;
+    const results = new Array(promises.length);
+    let remaining = promises.length;
     promises.forEach((promise, index) => {
       Promise.resolve(promise)
-        .then((result) => {
-          results[index] = result;
-          completedCount++;
-          if (completedCount === promises.length) {
+        .then(value => {
+          results[index] = value;
+          if (--remaining === 0) {
             resolve(results);
           }
         })
-        .catch((error) => {
-          reject(error); // 如果有一个 Promise 失败，则整体失败
-        });
+        .catch(reject);
     });
   });
 }
