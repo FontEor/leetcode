@@ -29,6 +29,7 @@ class MyPromise {
         resolve,
         reject,
       });
+      // 启动队列处理
       this.#run();
     });
   }
