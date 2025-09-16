@@ -22,3 +22,15 @@ console.log(a.__proto__ === B.prototype.__proto__); //推导出来的
 // __proto__ 是用来表示关系的
 // prototype 是用来定义方法和属性的
 // 如果 B 是一个普通的函数，B.__proto__ 指向 Function.prototype
+
+/**
+ * 构造函数C
+ * C.__proto__ 指向 Function.prototype
+ * C.prototype 指向一个对象
+ * C.prototype.constructor 指向 C
+ * C.prototype.__proto__ 指向 Object.prototype
+ * Object.prototype.__proto__ 指向 null（原型链尽头，没有原型了）
+ * Object.__proto__ 指向 Function.prototype
+ * Function.prototype.__proto__ 指向 Object.prototype
+ * Function.__proto__ 指向 Function.prototype(很重要)
+ * */ 

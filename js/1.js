@@ -1,32 +1,29 @@
-// 给你一个 n x n 的 方形 整数数组 matrix ，请你找出并返回通过 matrix 的下降路径 的 最小和 。
-
-// 下降路径 可以从第一行中的任何元素开始，并从每一行中选择一个元素。在下一行选择的元素和当前行所选元素最多相隔一列（即位于正下方或者沿对角线向左或者向右的第一个元素）。
-// 具体来说，位置 (row, col) 的下一个元素应当是 (row + 1, col - 1)、(row + 1, col) 或者 (row + 1, col + 1) 。
-// dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i - 1][j + 1]) + matrix[i][j]
-
-// 输入：matrix = [[2,1,3],[6,5,4],[7,8,9]]
-// 输出：13
-// 解释：如图所示，为和最小的两条下降路径
-var minFallingPathSum = function (matrix) {
-  const n = matrix.length;
-  const dp = new Array(n).fill(0).map(() => new Array(n).fill(0));
-  for(let j=0;j<n;j++){
-    dp[0][j] = matrix[0][j]
-  }
-  for (let i = 1; i < n; i++) {
-    for (let j = 0; j < n; j++) {
-      if (j === 0) {
-        dp[i][j] = Math.min(dp[i - 1][j], dp[i - 1][j + 1]) + matrix[i][j];
-      } else if (j === n - 1) {
-        dp[i][j] = Math.min(dp[i - 1][j - 1], dp[i - 1][j]) + matrix[i][j];
-      } else {
-        dp[i][j] =
-          Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i - 1][j + 1]) +
-          matrix[i][j];
+var compareVersion = function (version1, version2) {
+  const version1List = version1.split(".");
+  const version2List = version2.split(".");
+  const len = Math.min(version1List.length, version2List.length);
+  for (let i = 0; i < len; i++) {
+    let v1 = version1List[i];
+    let v2 = version2List[i];
+    const len1 = v1.length;
+    const len2 = v2.length;
+    if (len1 > len2) {
+      v2 = "0".repeat(len1 - len2) + v2;
+    } else if (len1 < len2) {
+      v1 = "0".repeat(len2 - len1) + v1;
+    }
+    for (let j = 0; j < len1; j++) {
+      if (v1[j] > v2[j]) {
+        return 1;
+      } else if (v1[j] < v2[j]) {
+        return -1;
       }
     }
   }
-  return Math.min(...dp[n - 1]);
+  if (version1List.length > version2List.length) {
+    return 1;
+  } else if (version1List.length < version2List.length) {
+    return -1;
+  }
+  return 0;
 };
-
-console.log(minFallingPathSum([[2,1,3],[6,5,4],[7,8,9]]))
