@@ -1,3 +1,29 @@
-// 长度最小的子数组
-// 给定一个含有 n 个正整数的数组和一个正整数 s ，找出该数组中满足其和 ≥ s 的长度最小的连续子数组，并返回其长度。如果不存在符合条件的连续子数组，返回 0。
-[];
+const p1 = () =>
+  new Promise((resolve, reject) => {
+    console.log(1);
+    let p2 = new Promise((resolve, reject) => {
+      console.log(2);
+      const timeOut1 = setTimeout(() => {
+        console.log(3);
+        resolve(4);
+      }, 0);
+      resolve(5);
+    });
+    resolve(6);
+    p2.then((arg) => {
+      console.log(arg);
+    });
+  });
+const timeOut2 = setTimeout(() => {
+  console.log(8);
+  const p3 = new Promise((reject) => {
+    reject(9);
+  }).then((res) => {
+    console.log(res);
+  });
+}, 0);
+
+p1().then((arg) => {
+  console.log(arg);
+});
+console.log(10);
