@@ -42,7 +42,7 @@ class EventEmitter {
   emit(eventName, ...args) {
     if (this.events[eventName]) {
       // 遍历所有该事件的回调并执行
-      this.events[eventName].forEach(callback => {
+      this.events[eventName].forEach((callback) => {
         callback.apply(this, args);
       });
     } else {
