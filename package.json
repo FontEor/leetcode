@@ -1,16 +1,16 @@
 {
-  "name": "leetcode",
+  "name": "@bobzi/my-lib-leetcode",
   "version": "1.0.0",
-  "description": "",
-  "main": "16进制转10进制.js",
+  "description": "leetcode-脚手架",
+  "main": "index.js",
   "bin": {
     "npm leetcli": "bin/leetcli.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Bob Zi",
+  "license": "MIT",
   "dependencies": {
     "commander": "^14.0.3"
   }
