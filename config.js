@@ -1,4 +1,5 @@
 import ora from "ora";
+import chalk from "chalk";
 export const choices = [
   { name: "Express", value: "Express" },
   { name: "Koa", value: "Koa" },
@@ -22,13 +23,15 @@ export const frameworkConfig = {
 
 export function downloadFramework(answers, project, download) {
   const config = frameworkConfig[answers.framework];
-  const spinner = ora(`Loading${config ? ` ${config.name}` : ""}`).start();
+  const spinner = ora(
+    chalk.blue(`Loading${config ? ` ${config.name}...` : "..."}`),
+  ).start();
   if (config) {
     download(config.repo, project, function (err) {
       if (err) {
-        spinner.fail("Failed to download the repository");
+        spinner.fail(chalk.red("Failed to download the repository"));
       } else {
-        spinner.succeed("Repository downloaded successfully");
+        spinner.succeed(chalk.green("Repository downloaded successfully"));
       }
     });
   }
