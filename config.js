@@ -1,3 +1,4 @@
+import ora from "ora";
 export const choices = [
   { name: "Express", value: "Express" },
   { name: "Koa", value: "Koa" },
@@ -21,9 +22,14 @@ export const frameworkConfig = {
 
 export function downloadFramework(answers, project, download) {
   const config = frameworkConfig[answers.framework];
+  const spinner = ora(`Loading${config ? ` ${config.name}` : ""}`).start();
   if (config) {
     download(config.repo, project, function (err) {
-      console.log(err ? "Error" : "Success");
+      if (err) {
+        spinner.fail("Failed to download the repository");
+      } else {
+        spinner.succeed("Repository downloaded successfully");
+      }
     });
   }
 }
