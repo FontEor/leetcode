@@ -2,6 +2,7 @@
   "name": "@bobzi/my-lib-leetcode",
   "version": "1.0.0",
   "description": "leetcode-脚手架",
+  "type": "module",
   "main": "index.js",
   "bin": {
     "leetcli": "bin/leetcli.js"
@@ -12,7 +13,9 @@
   "author": "Bob Zi",
   "license": "MIT",
   "dependencies": {
-    "commander": "^14.0.3"
+    "commander": "^14.0.3",
+    "download-git-repo": "^3.0.2",
+    "inquirer": "^13.3.0"
   },
   "devDependencies": {
     "vite": "^7.3.1"
